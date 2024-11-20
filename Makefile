@@ -13,6 +13,9 @@ all: dwm
 
 ${OBJ}: config.h config.mk
 
+bar: bar.c
+	${CC} -o bar bar.c
+
 config.h:
 	cp config.def.h $@
 
