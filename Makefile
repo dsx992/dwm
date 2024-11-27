@@ -16,6 +16,9 @@ ${OBJ}: config.h config.mk
 bar: bar.c
 	${CC} -o bar bar.c
 
+roottest: roottest.c
+	${CC} -o roottest roottest.c
+
 config.h:
 	cp config.def.h $@
 
