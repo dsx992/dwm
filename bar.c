@@ -7,6 +7,7 @@
 #include <string.h>
 // #include <signal.h>
 #include <unistd.h>
+#include <limits.h>
 
 #define BAT0_CAP            "/sys/class/power_supply/BAT0/capacity"
 #define BAT0_STATUS         "/sys/class/power_supply/BAT0/status"
@@ -42,6 +43,7 @@ int update_status(size_t from, size_t length, char* msg) {
     pthread_mutex_lock(&msg_lock);
     memcpy(&status[from], msg, length);
 
+    status[MSG_SIZE] = '\0';        // safety
     XStoreName(display, root, status);
     XFlush(display);
 
@@ -72,11 +74,10 @@ void* update_battery() {
         fclose(fp);
 
         // TODO: optimize
-        // do not show discharge status
         if (strncmp(stat, "Discharging", 10) == 0) {
             stat[0] = '\0';
         } else {
-            stat[0] = '^';
+            stat[0] = '+';
             stat[1] = '\0';
         }
 
@@ -143,7 +144,9 @@ int main() {
 
     line = malloc(128);
 
-    while (1) { }
+    while (1) {
+        sleep(UINT_MAX);
+    }
 
     pthread_cancel(clock_thr);
     pthread_cancel(bat_thr);
